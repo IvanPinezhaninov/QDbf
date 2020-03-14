@@ -88,6 +88,7 @@ public:
 
     bool setCodepage(QDbfTable::Codepage codepage);
     QDbfTable::Codepage codepage() const;
+	void setDefaultCodepage(QDbfTable::Codepage codepage);
 
     bool isOpen() const;
 
