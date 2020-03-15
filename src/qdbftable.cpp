@@ -129,7 +129,7 @@ public:
     QVariant memoFieldValue(int index) const;
     QDataStream::ByteOrder memoByteOrder() const;
     bool setCodepage(QDbfTable::Codepage codepage);
-	void setDefaultCodepage(QDbfTable::Codepage codepage);
+    void setDefaultCodepage(QDbfTable::Codepage codepage);
     bool isValueValid(int i, const QVariant &value) const;
     void setTextCodec();
     bool setValue(int fieldIndex, const QVariant &value);
@@ -147,7 +147,7 @@ public:
     QDbfTable::OpenMode m_openMode = QDbfTable::ReadOnly;
     QDbfMemoType m_memoType = QDbfTablePrivate::NoMemo;
     QDbfTable::Codepage m_codepage = QDbfTable::CodepageNotSet;
-	QDbfTable::Codepage m_default_codepage;
+    QDbfTable::Codepage m_default_codepage;
     mutable QDbfRecord m_currentRecord;
     QDbfRecord m_record;
     quint16 m_headerLength = 0;
@@ -818,7 +818,7 @@ bool QDbfTable::open(OpenMode openMode)
     stream >> codepage;
     switch(codepage) {
     case CODEPAGE_NOT_SET:
-		d->m_codepage = d->m_default_codepage;
+        d->m_codepage = d->m_default_codepage;
         break;
     case CODEPAGE_US_MSDOS:
         d->m_codepage = QDbfTable::IBM437;
