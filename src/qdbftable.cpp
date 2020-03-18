@@ -944,6 +944,8 @@ bool QDbfTable::open(OpenMode openMode)
         fieldOffset += fieldLength;
     }
 
+    d->m_currentRecord = d->m_record;
+
     if (Internal::QDbfTablePrivate::NoMemo != d->m_memoType) {
         return d->openMemoFile();
     }
@@ -1259,6 +1261,18 @@ bool QDbfTable::addRecord(const QDbfRecord &record)
     }
     stream << ++d->m_recordsCount;
 
+    // Rewind and replace (0x1A) to (0x20) for previous record
+    // Otherwise most DBF readers will treat records with 0x1A as "deleted"
+    const qint64 position_old = static_cast<qint64>(d->m_recordLength) * (d->m_recordsCount-1) + d->m_headerLength;
+    if (!d->m_tableFile.seek(position_old)) {
+        d->m_error = QDbfTable::FileReadError;
+        return false;
+    }
+    if (d->m_tableFile.write(QByteArray(1, FIELD_SPACER)) != 1) {
+        d->m_error = QDbfTable::FileWriteError;
+        return false;
+    }
+
     // Write end of file mark
     auto position = qint64(d->m_recordLength) * d->m_recordsCount + d->m_headerLength;
 
@@ -1272,7 +1286,7 @@ bool QDbfTable::addRecord(const QDbfRecord &record)
         return false;
     }
 
-    d->m_currentIndex = d->m_recordsCount;
+    d->m_currentIndex = d->m_recordsCount-1;
 
     return setRecord(record);
 }
