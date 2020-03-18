@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2019 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **
@@ -35,10 +35,10 @@ const int DBF_PREFETCH = 255;
 namespace QDbf {
 namespace Internal {
 
-class QDbfTableModelPrivate
+class QDbfTableModelPrivate final
 {
 public:
-    explicit QDbfTableModelPrivate(const QString &filePath);
+    explicit QDbfTableModelPrivate(QString &&filePath);
 
     void clear();
 
@@ -53,8 +53,8 @@ public:
 };
 
 
-QDbfTableModelPrivate::QDbfTableModelPrivate(const QString &filePath) :
-    m_filePath(filePath),
+QDbfTableModelPrivate::QDbfTableModelPrivate(QString &&filePath) :
+    m_filePath(std::move(filePath)),
     m_dbfTable(new QDbfTable())
 {
 }
@@ -79,9 +79,9 @@ QDbfTableModel::QDbfTableModel(QObject *parent) :
 }
 
 
-QDbfTableModel::QDbfTableModel(const QString &filePath, QObject *parent) :
+QDbfTableModel::QDbfTableModel(QString filePath, QObject *parent) :
     QAbstractTableModel(parent),
-    d(new Internal::QDbfTableModelPrivate(filePath))
+    d(new Internal::QDbfTableModelPrivate(std::move(filePath)))
 {
 }
 
@@ -106,9 +106,9 @@ QDbfTableModel::~QDbfTableModel()
 }
 
 
-bool QDbfTableModel::open(const QString &filePath, bool readOnly)
+bool QDbfTableModel::open(QString filePath, bool readOnly)
 {
-    d->m_filePath = filePath;
+    d->m_filePath = std::move(filePath);
     return open(readOnly);
 }
 

@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2019 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **
@@ -37,7 +37,7 @@ class QDbfTablePrivate;
 class QDBF_EXPORT QDbfField
 {
 public:
-    explicit QDbfField(const QString &fieldName = QString());
+    explicit QDbfField(QString fieldName = QString());
 
     QDbfField(const QDbfField &other);
     QDbfField(QDbfField &&other) Q_DECL_NOEXCEPT;
@@ -62,10 +62,10 @@ public:
         DateTime
     };
 
-    void setValue(const QVariant &value);
+    void setValue(QVariant value);
     inline QVariant value() const { return val; }
 
-    void setName(const QString &name);
+    void setName(QString name);
     QString name() const;
 
     bool isNull() const;
@@ -87,7 +87,7 @@ public:
     void setOffset(int offset);
     int offset() const;
 
-    void setDefaultValue(const QVariant &value);
+    void setDefaultValue(QVariant value);
     QVariant defaultValue() const;
 
     void swap(QDbfField &other) Q_DECL_NOEXCEPT;

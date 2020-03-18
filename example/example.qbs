@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2018 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **

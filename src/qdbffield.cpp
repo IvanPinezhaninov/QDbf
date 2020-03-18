@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2019 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **
@@ -27,26 +27,31 @@
 namespace QDbf {
 namespace Internal {
 
-class QDbfFieldPrivate
+class QDbfFieldPrivate final
 {
 public:
-    explicit QDbfFieldPrivate(const QString &name);
+    explicit QDbfFieldPrivate(QString &&name);
     QDbfFieldPrivate(const QDbfFieldPrivate &other);
+    QDbfFieldPrivate(QDbfFieldPrivate &&other) = delete;
+    QDbfFieldPrivate &operator=(const QDbfFieldPrivate &other) = delete;
+    QDbfFieldPrivate &operator=(QDbfFieldPrivate &&other) = delete;
+    virtual ~QDbfFieldPrivate() = default;
+
     bool operator==(const QDbfFieldPrivate &other) const;
 
     QAtomicInt ref = 1;
     QDbfField::QDbfType m_type = QDbfField::Undefined;
     QString m_name;
+    QVariant m_defaultValue;
     int m_length = -1;
     int m_precision = -1;
     int m_offset = 0;
     bool m_readOnly = false;
-    QVariant m_defaultValue;
 };
 
 
-QDbfFieldPrivate::QDbfFieldPrivate(const QString &name) :
-    m_name(name)
+QDbfFieldPrivate::QDbfFieldPrivate(QString&& name) :
+    m_name(std::move(name))
 {
 }
 
@@ -54,31 +59,31 @@ QDbfFieldPrivate::QDbfFieldPrivate(const QString &name) :
 QDbfFieldPrivate::QDbfFieldPrivate(const QDbfFieldPrivate &other) :
     m_type(other.m_type),
     m_name(other.m_name),
+    m_defaultValue(other.m_defaultValue),
     m_length(other.m_length),
     m_precision(other.m_precision),
     m_offset(other.m_offset),
-    m_readOnly(other.m_readOnly),
-    m_defaultValue(other.m_defaultValue)
+    m_readOnly(other.m_readOnly)
 {
 }
 
 
 bool QDbfFieldPrivate::operator==(const QDbfFieldPrivate &other) const
 {
-    return (m_name == other.m_name &&
-            m_type == other.m_type &&
-            m_readOnly == other.m_readOnly &&
+    return (m_type == other.m_type &&
+            m_name == other.m_name &&
+            m_defaultValue == other.m_defaultValue &&
             m_length == other.m_length &&
             m_precision == other.m_precision &&
             m_offset == other.m_offset &&
-            m_defaultValue == other.m_defaultValue);
+            m_readOnly == other.m_readOnly);
 }
 
 } // namespace Internal
 
 
-QDbfField::QDbfField(const QString &fieldName) :
-    d(new Internal::QDbfFieldPrivate(fieldName))
+QDbfField::QDbfField(QString fieldName) :
+    d(new Internal::QDbfFieldPrivate(std::move(fieldName)))
 {
 }
 
@@ -139,20 +144,20 @@ QDbfField::~QDbfField()
 }
 
 
-void QDbfField::setValue(const QVariant &value)
+void QDbfField::setValue(QVariant value)
 {
     if (isReadOnly()) {
         return;
     }
 
-    val = value;
+    val = std::move(value);
 }
 
 
-void QDbfField::setName(const QString &name)
+void QDbfField::setName(QString name)
 {
     detach();
-    d->m_name = name;
+    d->m_name = std::move(name);
 }
 
 
@@ -243,10 +248,10 @@ int QDbfField::offset() const
 }
 
 
-void QDbfField::setDefaultValue(const QVariant &value)
+void QDbfField::setDefaultValue(QVariant value)
 {
     detach();
-    d->m_defaultValue = value;
+    d->m_defaultValue = std::move(value);
 }
 
 

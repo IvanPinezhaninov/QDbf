@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2019 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **
@@ -71,14 +71,14 @@ public:
         UnsupportedFile
     };
 
-    explicit QDbfTable(const QString &dbfFileName = QString());
+    explicit QDbfTable(QString dbfFileName = QString());
 
     QDbfTable(QDbfTable &&other) Q_DECL_NOEXCEPT;
     QDbfTable &operator=(QDbfTable &&other) Q_DECL_NOEXCEPT;
 
     virtual ~QDbfTable();
 
-    bool open(const QString &fileName, OpenMode openMode = QDbfTable::ReadOnly);
+    bool open(QString fileName, OpenMode openMode = QDbfTable::ReadOnly);
     bool open(OpenMode openMode = QDbfTable::ReadOnly);
     void close();
 

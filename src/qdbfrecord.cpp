@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2019 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **
@@ -30,11 +30,15 @@
 namespace QDbf {
 namespace Internal {
 
-class QDbfRecordPrivate
+class QDbfRecordPrivate final
 {
 public:
     QDbfRecordPrivate() = default;
     QDbfRecordPrivate(const QDbfRecordPrivate &other);
+    QDbfRecordPrivate(QDbfRecordPrivate &&other) = delete;
+    QDbfRecordPrivate &operator=(const QDbfRecordPrivate &other) = delete;
+    QDbfRecordPrivate &operator=(QDbfRecordPrivate &&other) = delete;
+    virtual ~QDbfRecordPrivate() = default;
 
     QAtomicInt ref = 1;
     int m_index = -1;
@@ -126,14 +130,14 @@ int QDbfRecord::recordIndex() const
 }
 
 
-void QDbfRecord::setValue(int fieldIndex, const QVariant &value)
+void QDbfRecord::setValue(int fieldIndex, QVariant value)
 {
     if (!contains(fieldIndex)) {
         return;
     }
 
     detach();
-    d->m_fields[fieldIndex].setValue(value);
+    d->m_fields[fieldIndex].setValue(std::move(value));
 }
 
 
@@ -143,9 +147,9 @@ QVariant QDbfRecord::value(int fieldIndex) const
 }
 
 
-void QDbfRecord::setValue(const QString &fieldName, const QVariant &value)
+void QDbfRecord::setValue(const QString &fieldName, QVariant value)
 {
-    setValue(indexOf(fieldName), value);
+    setValue(indexOf(fieldName), std::move(value));
 }
 
 

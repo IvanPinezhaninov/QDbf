@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2019 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **
@@ -39,14 +39,14 @@ class QDBF_EXPORT QDbfTableModel : public QAbstractTableModel
     Q_OBJECT
 public:
     explicit QDbfTableModel(QObject *parent = nullptr);
-    explicit QDbfTableModel(const QString &filePath, QObject *parent = nullptr);
+    explicit QDbfTableModel(QString filePath, QObject *parent = nullptr);
 
     QDbfTableModel(QDbfTableModel &&other) Q_DECL_NOEXCEPT;
     QDbfTableModel &operator=(QDbfTableModel &&other) Q_DECL_NOEXCEPT;
 
     ~QDbfTableModel();
 
-    bool open(const QString &filePath, bool readOnly = false);
+    bool open(QString filePath, bool readOnly = false);
     bool open(bool readOnly = false);
     void close();
 

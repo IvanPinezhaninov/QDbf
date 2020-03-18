@@ -1,6 +1,6 @@
 /***************************************************************************
 **
-** Copyright (C) 2019 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
+** Copyright (C) 2020 Ivan Pinezhaninov <ivan.pinezhaninov@gmail.com>
 **
 ** This file is part of the QDbf - Qt DBF library.
 **
@@ -107,10 +107,10 @@ const quint8 TIMESTAMP_LENGTH = 8;
 namespace QDbf {
 namespace Internal {
 
-class QDbfTablePrivate
+class QDbfTablePrivate final
 {
 public:
-    explicit QDbfTablePrivate(const QString &dbfFileName);
+    explicit QDbfTablePrivate(QString &&dbfFileName);
 
     enum QDbfMemoType {
         NoMemo,
@@ -147,7 +147,7 @@ public:
     QDbfTable::OpenMode m_openMode = QDbfTable::ReadOnly;
     QDbfMemoType m_memoType = QDbfTablePrivate::NoMemo;
     QDbfTable::Codepage m_codepage = QDbfTable::CodepageNotSet;
-    QDbfTable::Codepage m_default_codepage;
+    QDbfTable::Codepage m_defaultCodepage = QDbfTable::CodepageNotSet;
     mutable QDbfRecord m_currentRecord;
     QDbfRecord m_record;
     quint16 m_headerLength = 0;
@@ -162,8 +162,8 @@ public:
 };
 
 
-QDbfTablePrivate::QDbfTablePrivate(const QString &dbfFileName) :
-    m_tableFileName(dbfFileName),
+QDbfTablePrivate::QDbfTablePrivate(QString &&dbfFileName) :
+    m_tableFileName(std::move(dbfFileName)),
     m_textCodec(QTextCodec::codecForLocale())
 {
 }
@@ -308,7 +308,7 @@ QDataStream::ByteOrder QDbfTablePrivate::memoByteOrder() const
 
 void QDbfTablePrivate::setDefaultCodepage(QDbfTable::Codepage codepage)
 {
-    m_default_codepage = codepage;
+    m_defaultCodepage = codepage;
 }
 
 
@@ -666,8 +666,8 @@ void QDbfTablePrivate::setLastUpdate()
 } // namespace Internal
 
 
-QDbfTable::QDbfTable(const QString &dbfFileName) :
-    d(new Internal::QDbfTablePrivate(dbfFileName))
+QDbfTable::QDbfTable(QString dbfFileName) :
+    d(new Internal::QDbfTablePrivate(std::move(dbfFileName)))
 {
 }
 
@@ -711,9 +711,9 @@ QDbfTable::DbfTableError QDbfTable::error() const
 }
 
 
-bool QDbfTable::open(const QString &fileName, OpenMode openMode)
+bool QDbfTable::open(QString fileName, OpenMode openMode)
 {
-    d->m_tableFileName = fileName;
+    d->m_tableFileName = std::move(fileName);
     return open(openMode);
 }
 
@@ -818,7 +818,7 @@ bool QDbfTable::open(OpenMode openMode)
     stream >> codepage;
     switch(codepage) {
     case CODEPAGE_NOT_SET:
-        d->m_codepage = d->m_default_codepage;
+        d->m_codepage = d->m_defaultCodepage;
         break;
     case CODEPAGE_US_MSDOS:
         d->m_codepage = QDbfTable::IBM437;
