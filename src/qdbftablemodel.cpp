@@ -139,6 +139,11 @@ void QDbfTableModel::close()
     d->m_dbfTable->close();
 }
 
+int QDbfTableModel::fieldIndex(const QString &fieldName) const
+{
+    return d->m_record.indexOf(fieldName);
+}
+
 
 bool QDbfTableModel::readOnly() const
 {
