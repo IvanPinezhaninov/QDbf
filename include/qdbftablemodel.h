@@ -50,6 +50,8 @@ public:
     bool open(bool readOnly = false);
     void close();
 
+    int fieldIndex(const QString &fieldName) const;
+
     bool readOnly() const;
     QDbfTable::DbfTableError error() const;
     QDate lastUpdate() const;
